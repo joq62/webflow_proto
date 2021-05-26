@@ -95,6 +95,21 @@ init([]) ->
     ok = application:start(ranch), 
     ok = application:start(cowlib), 
     ok = application:start(cowboy),
+
+    % Application unique
+    IndexRoute={ "/", cowboy_static, {priv_file, webflow_proto, "index.html"} },
+    HandlerRoute={"/please_upgrade_to_websocket", myws_handler, []},
+    CatchAllRoute={"/[...]", no_matching_route_handler, []},
+
+    Port=8080,
+ %   Dir=webflow_proto,
+ %   HtmlFile="index.html",
+ %   Handler=myws_handler,
+    ok=application:set_env([{websocket,[
+					{port,Port},
+					{index_route,IndexRoute},
+					{handler_route,HandlerRoute},
+					{catch_route,CatchAllRoute}]}]),
     ok=application:start(websocket),
     {ok, #state{}}.
 
